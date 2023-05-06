@@ -74,5 +74,4 @@ module.exports = {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   current: ctrlWrapper(current),
-  logout: ctrlWrapper(logout),
 };
