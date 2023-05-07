@@ -2,7 +2,6 @@ const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
 
-const usersRouter = require("./routes/api/users");
 const authRouter = require("./routes/api/auth");
 
 const app = express();
@@ -12,7 +11,6 @@ const formatsLogger = app.get("env") === "development" ? "dev" : "short";
 app.use(logger(formatsLogger));
 app.use(cors());
 
-app.use("/api/", usersRouter);
 app.use("/api/auth", authRouter);
 
 app.use((req, res) => {

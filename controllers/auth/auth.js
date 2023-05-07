@@ -84,8 +84,20 @@ const current = (req, res) => {
 //   });
 // };
 
+const getAllUsers = async (req, res) => {
+  // const { _id } = req.user;
+
+  const result = await User.find({});
+
+  if (!result) {
+    throw HttpError(404, "Not Found");
+  }
+  res.json(result);
+};
+
 module.exports = {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   current: ctrlWrapper(current),
+  getUsersData: ctrlWrapper(getAllUsers),
 };
