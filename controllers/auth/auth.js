@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 
 const jwt = require("jsonwebtoken");
 
-const http = require("http");
+const requestIp = require("request-ip");
 
 require("dotenv").config();
 
@@ -42,8 +42,7 @@ const login = async (req, res) => {
   if (!passwordCompare) {
     throw HttpError(401, "Username or password is wrong");
   }
-
-  const ip = req.connection.remoteAddress;
+  const ip = requestIp.getClientIp(req);
   console.log(ip);
   const payload = {
     id: user._id,
@@ -53,11 +52,9 @@ const login = async (req, res) => {
   await User.findByIdAndUpdate(user._id, { token, ip });
   res.json({
     token: token,
-
     user: {
       username: user.username,
       admin: user.admin,
-      ip,
     },
   });
 };
