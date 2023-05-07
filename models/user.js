@@ -25,6 +25,18 @@ const userSchema = Schema(
       type: String,
       default: null,
     },
+    oldIp: {
+      type: String,
+      default: null,
+    },
+    oldData: {
+      type: Object,
+      default: null,
+    },
+    currentData: {
+      type: Object,
+      default: null,
+    },
   },
   { versionKey: false, timestapms: true }
 );
