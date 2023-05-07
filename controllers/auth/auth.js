@@ -2,6 +2,8 @@ const bcrypt = require("bcrypt");
 
 const jwt = require("jsonwebtoken");
 
+const http = require("http");
+
 require("dotenv").config();
 
 const { SECRET_KEY } = process.env;
@@ -41,17 +43,21 @@ const login = async (req, res) => {
     throw HttpError(401, "Username or password is wrong");
   }
 
+  const ip = req.connection.remoteAddress;
+  console.log(ip);
   const payload = {
     id: user._id,
   };
 
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
-  await User.findByIdAndUpdate(user._id, { token });
+  await User.findByIdAndUpdate(user._id, { token, ip });
   res.json({
     token: token,
+
     user: {
       username: user.username,
       admin: user.admin,
+      ip,
     },
   });
 };
@@ -62,13 +68,13 @@ const current = (req, res) => {
   res.json({ username, admin });
 };
 
-const logout = async (req, res) => {
-  const { _id } = req.user;
-  await User.findByIdAndUpdate(_id, { token: "" });
-  res.json({
-    message: "logout sucsses",
-  });
-};
+// const logout = async (req, res) => {
+//   const { _id } = req.user;
+//   await User.findByIdAndUpdate(_id, { token: "" });
+//   res.json({
+//     message: "logout sucsses",
+//   });
+// };
 
 module.exports = {
   register: ctrlWrapper(register),

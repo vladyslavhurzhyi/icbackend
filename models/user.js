@@ -21,6 +21,10 @@ const userSchema = Schema(
       type: String,
       default: null,
     },
+    ip: {
+      type: String,
+      default: null,
+    },
   },
   { versionKey: false, timestapms: true }
 );
