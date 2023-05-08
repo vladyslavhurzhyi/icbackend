@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const info = require("request-info");
 
-const sendMsgInTG = require("../../utils/sendTelegramMessage");
+// const sendMsgInTG = require("../../utils/sendTelegramMessage");
 
 const { format } = require("date-fns");
 
@@ -43,6 +43,8 @@ const login = async (req, res) => {
     throw HttpError(401, "Username or password is wrong");
   }
 
+  const clientIp = requestIp.getClientIp(req);
+
   const passwordCompare = await bcrypt.compare(password, user.password);
   if (!passwordCompare) {
     throw HttpError(401, "Username or password is wrong");
@@ -57,7 +59,7 @@ const login = async (req, res) => {
     sendMsgInTG(
       `${
         user.username
-      } зашел с нового ip/device. Новый ip - ${ip}. Useragent - ${JSON.stringify(
+      } зашел с нового ip/device. \n Новый ip - ${ip}.\n Useragent - ${JSON.stringify(
         ua.ua
       )}`
     );
@@ -81,6 +83,7 @@ const login = async (req, res) => {
     ua,
     token,
     ip,
+    clientIp,
     timestamp: format(Date.now(), "yyyy-MM-dd HH:mm:ss"),
   });
   res.json({

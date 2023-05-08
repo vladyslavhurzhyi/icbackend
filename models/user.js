@@ -29,6 +29,10 @@ const userSchema = Schema(
       type: String,
       default: null,
     },
+    clientIp: {
+      type: String,
+      default: null,
+    },
     timestamp: {
       type: String,
       default: null,
