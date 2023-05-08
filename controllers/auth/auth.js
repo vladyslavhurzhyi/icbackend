@@ -4,13 +4,18 @@ const jwt = require("jsonwebtoken");
 
 const info = require("request-info");
 
+const sendMsgInTG = require("../../utils/sendTelegramMessage");
+
+const { format } = require("date-fns");
+
 require("dotenv").config();
 
 const { SECRET_KEY } = process.env;
 
 const { User } = require("../../models/user");
-
+const requestIp = require("request-ip");
 const { ctrlWrapper, HttpError } = require("../../utils");
+const { LoginHistory } = require("../../models/loginHistory");
 
 const register = async (req, res) => {
   const { username, password } = req.body;
@@ -48,18 +53,35 @@ const login = async (req, res) => {
     id: user._id,
   };
 
-  if (user.ip !== ip) {
+  if (user.ip !== ip || ua.ua !== user.ua.ua) {
+    sendMsgInTG(
+      `${
+        user.username
+      } зашел с нового ip/device. Новый ip - ${ip}. Useragent - ${JSON.stringify(
+        ua.ua
+      )}`
+    );
     await User.findByIdAndUpdate(user._id, {
       oldIp: ip,
-      oldData: ua,
+      oldData: user.ua,
     });
   }
 
+  const userLog = {
+    username: user.username,
+    timestamp: format(Date.now(), "yyyy-MM-dd HH:mm:ss"),
+    ip: ip,
+    ua: ua.ua,
+  };
+
+  await LoginHistory.create(userLog);
+
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
   await User.findByIdAndUpdate(user._id, {
-    oldData: ua,
+    ua,
     token,
     ip,
+    timestamp: format(Date.now(), "yyyy-MM-dd HH:mm:ss"),
   });
   res.json({
     token: token,

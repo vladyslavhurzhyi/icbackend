@@ -29,7 +29,15 @@ const userSchema = Schema(
       type: String,
       default: null,
     },
+    timestamp: {
+      type: String,
+      default: null,
+    },
     oldData: {
+      type: Object,
+      default: null,
+    },
+    ua: {
       type: Object,
       default: null,
     },
