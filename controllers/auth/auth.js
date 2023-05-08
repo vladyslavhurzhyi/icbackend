@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const info = require("request-info");
 
-// const sendMsgInTG = require("../../utils/sendTelegramMessage");
+const sendMsgInTG = require("../../utils/sendTelegramMessage");
 
 const { format } = require("date-fns");
 
