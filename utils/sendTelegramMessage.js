@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-const { TGBOT } = process.env;
+const { TGBOT, CHAT } = process.env;
 
 const TelegramBot = require("node-telegram-bot-api");
 
@@ -9,7 +9,7 @@ const bot = new TelegramBot(TGBOT, {
 });
 
 const sendMessageInTg = (message) => {
-  bot.sendMessage(-1001922535971, message);
+  bot.sendMessage(CHAT, message);
 };
 
 module.exports = sendMessageInTg;
