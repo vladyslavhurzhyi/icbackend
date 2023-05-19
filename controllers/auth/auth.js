@@ -43,28 +43,28 @@ const login = async (req, res) => {
     throw HttpError(401, "Username or password is wrong");
   }
 
-  const clientIp = requestIp.getClientIp(req);
-
   const passwordCompare = await bcrypt.compare(password, user.password);
   if (!passwordCompare) {
     throw HttpError(401, "Username or password is wrong");
   }
-  const { ua, ip } = info(req);
+
+  const clientIp = requestIp.getClientIp(req);
+  const { ua } = info(req);
 
   const payload = {
     id: user._id,
   };
 
-  if (user.ip !== ip || ua.ua !== user.ua.ua) {
+  if (user.ip !== clientIp || ua.ua !== user.ua.ua) {
     sendMsgInTG(
       `${
         user.username
-      } зашел с нового ip/device. \n Новый ip - ${ip}.\n Useragent - ${JSON.stringify(
+      } зашел с нового ip/device. \n Новый ip - ${clientIp}. \n Useragent - ${JSON.stringify(
         ua.ua
       )}`
     );
     await User.findByIdAndUpdate(user._id, {
-      oldIp: ip,
+      oldIp: clientIp,
       oldData: user.ua,
     });
   }
@@ -72,7 +72,7 @@ const login = async (req, res) => {
   const userLog = {
     username: user.username,
     timestamp: format(Date.now(), "yyyy-MM-dd HH:mm:ss"),
-    ip: ip,
+    ip: clientIp,
     ua: ua.ua,
   };
 
@@ -82,8 +82,7 @@ const login = async (req, res) => {
   await User.findByIdAndUpdate(user._id, {
     ua,
     token,
-    ip,
-    clientIp,
+    ip: clientIp,
     timestamp: format(Date.now(), "yyyy-MM-dd HH:mm:ss"),
   });
   res.json({

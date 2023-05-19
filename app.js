@@ -5,7 +5,10 @@ const cors = require("cors");
 const authRouter = require("./routes/api/auth");
 const loginHistoryRouter = require("./routes/api/loginHistory");
 const app = express();
+app.set("trust proxy", true);
+
 app.use(express.json());
+
 const formatsLogger = app.get("env") === "development" ? "dev" : "short";
 
 app.use(logger(formatsLogger));
