@@ -64,7 +64,7 @@ const login = async (req, res) => {
       )}`
     );
     await User.findByIdAndUpdate(user._id, {
-      oldIp: clientIp,
+      oldIp: user.ip,
       oldData: user.ua,
     });
   }
