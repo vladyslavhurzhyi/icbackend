@@ -17,6 +17,14 @@ const userSchema = Schema(
       type: Boolean,
       default: false,
     },
+    demo: {
+      type: Boolean,
+      default: false,
+    },
+    admin: {
+      type: Boolean,
+      default: false,
+    },
     token: {
       type: String,
       default: null,

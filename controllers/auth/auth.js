@@ -10,7 +10,7 @@ const { format } = require("date-fns");
 
 require("dotenv").config();
 
-const { SECRET_KEY } = process.env;
+const { SECRET_KEY, DEMO_TOKEN } = process.env;
 
 const { User } = require("../../models/user");
 const requestIp = require("request-ip");
@@ -39,6 +39,7 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ username });
+
   if (!user) {
     throw HttpError(401, "Username or password is wrong");
   }
@@ -54,6 +55,8 @@ const login = async (req, res) => {
   const payload = {
     id: user._id,
   };
+
+  const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
 
   if (user.ip !== clientIp || ua.ua !== user.ua.ua) {
     sendMsgInTG(
@@ -78,26 +81,27 @@ const login = async (req, res) => {
 
   await LoginHistory.create(userLog);
 
-  const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
   await User.findByIdAndUpdate(user._id, {
     ua,
     token,
     ip: clientIp,
     timestamp: format(Date.now(), "yyyy-MM-dd HH:mm:ss"),
   });
+
   res.json({
     token: token,
     user: {
       username: user.username,
       admin: user.admin,
+      demo: user.demo,
     },
   });
 };
 
 const current = (req, res) => {
-  const { username, admin } = req.user;
+  const { username, admin, demo } = req.user;
 
-  res.json({ username, admin });
+  res.json({ username, admin, demo });
 };
 
 // const logout = async (req, res) => {
