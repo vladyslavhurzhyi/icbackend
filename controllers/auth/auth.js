@@ -60,6 +60,10 @@ const login = async (req, res) => {
 
   const geoData = geoip.lookup(clientIp);
 
+  console.log("geoData", geoData);
+
+  console.log("typeof geoData", typeof geoData);
+
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
 
   if (
