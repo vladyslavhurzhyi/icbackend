@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 
 const info = require("request-info");
 
+const geoip = require("geoip-lite");
+
 const sendMsgInTG = require("../../utils/sendTelegramMessage");
 
 const { format } = require("date-fns");
@@ -56,13 +58,20 @@ const login = async (req, res) => {
     id: user._id,
   };
 
+  const geoData = geoip.lookup(clientIp);
+
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
 
-  if (user.ip !== clientIp || ua.ua !== user.ua.ua) {
+  if (
+    (user.ip !== clientIp || ua.ua !== user.ua.ua) &&
+    user.username !== "demo"
+  ) {
     sendMsgInTG(
       `${
         user.username
-      } зашел с нового ip/device. \n Новый ip - ${clientIp}. \n Useragent - ${JSON.stringify(
+      } \n зашел с нового ip/device. \n Новый ip - ${clientIp}. \n ${
+        geoData.country
+      } ${geoData.region} ${geoData.city} \n Useragent - ${JSON.stringify(
         ua.ua
       )}`
     );
@@ -113,7 +122,11 @@ const current = (req, res) => {
 // };
 
 const getAllUsers = async (req, res) => {
-  // const { _id } = req.user;
+  const { admin } = req.user;
+
+  if (!admin) {
+    throw HttpError(401, "Unauthorized");
+  }
 
   const result = await User.find({});
 
