@@ -20,6 +20,10 @@ const loginHistorySchema = Schema({
     type: Object,
     default: null,
   },
+  geoData: {
+    typeof: Object,
+    default: null,
+  },
 });
 
 loginHistorySchema.post("save", handleMongooseError);
