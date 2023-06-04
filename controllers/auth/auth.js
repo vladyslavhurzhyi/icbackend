@@ -89,7 +89,6 @@ const login = async (req, res) => {
     timestamp: format(Date.now(), "yyyy-MM-dd HH:mm:ss"),
     ip: clientIp,
     ua: ua.ua,
-    geoData,
   };
 
   await LoginHistory.create(userLog);
