@@ -67,13 +67,12 @@ const login = async (req, res) => {
     user.username !== "demo"
   ) {
     sendMsgInTG(
-      `${
-        user.username
-      } \n зашел с нового ip/device. \n Новый ip - ${clientIp}. \n ${
-        geoData.country
-      } ${geoData.region} ${geoData.city} \n Useragent - ${JSON.stringify(
-        ua.ua
-      )}`
+      ` Пользователь - ${user.username} 
+       \n зашел с нового ip/device.
+       \n Новый ip - ${clientIp}. 
+       \n Страна - ${geoData.country} 
+       \n Город - ${geoData.city} 
+       \n Useragent - ${JSON.stringify(ua.ua)}`
     );
     await User.findByIdAndUpdate(user._id, {
       oldIp: user.ip,
